@@ -12,6 +12,7 @@ class BookFile(models.Model):
     file = models.FileField(upload_to= 'bookfiles/')
     book = models.ForeignKey(Book, on_delete= models.CASCADE, related_name= 'files')
     format = models.CharField(max_length=10, choices=Format.choices)
+    download_count = models.PositiveIntegerField(default=0)
 
     class Meta:
         unique_together = ('book', 'format')
@@ -23,7 +24,6 @@ class BookFile(models.Model):
 class DownloadHistory(models.Model):
     user = models.ForeignKey(User, on_delete= models.CASCADE, related_name= 'download_history')
     book_file = models.ForeignKey(BookFile, on_delete= models.CASCADE, related_name= 'download_history')
-    download_count = models.PositiveIntegerField(default=0)
     downloaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

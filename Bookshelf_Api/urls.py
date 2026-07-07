@@ -27,10 +27,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
-    path('auth/', include('accounts.urls'), name='accounts'),
-    path('api/books/', include('books.urls'), name='books'),
-    path('api/files/', include('files.urls'), name='files'),
-    path('api/reviews/', include('reviews.urls'), name='reviews'),
+    path('auth/account/', include('accounts.urls'), name='account'),
+    path('api/book/', include('books.urls'), name='book'),
+    path('api/file/', include('files.urls'), name='file'),
+    path('api/review/', include('reviews.urls'), name='review'),
 ]
 
 if settings.DEBUG:

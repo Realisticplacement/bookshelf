@@ -3,10 +3,11 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from django.http import FileResponse
+from django.db.models import F
 
 from books.permissions import IsAdminOrReadOnly
-from .models import BookFile #, DownloadHistory
-from .serializers import BookFileSerializer#, DownloadHistorySerializer
+from .models import BookFile , DownloadHistory
+from .serializers import BookFileSerializer, DownloadHistorySerializer
 
 
 # Create your views here.
@@ -18,6 +19,9 @@ class BookFileViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'], permission_classes=[IsAuthenticated])
     def download(self, request, pk=None):
         book_file = self.get_object()
+        BookFile.objects.filter(pk=book_file.pk).update(
+            download_count=F("download_count") + 1
+        )
         user = request.user
         response = FileResponse(book_file.file, content_type= 'application/octet-stream')
         response['Content-Disposition'] = f'attachment; filename="{book_file.file.name}"'
@@ -25,7 +29,7 @@ class BookFileViewSet(viewsets.ModelViewSet):
 
 
 
-#class DownloadHistoryViewSet(viewsets.ModelViewSet):
-    #queryset = DownloadHistory.objects.all()
-   # serializer_class = DownloadHistorySerializer
-   # permission_classes = [IsAdminOrReadOnly]
+class DownloadHistoryViewSet(viewsets.ModelViewSet):
+    queryset = DownloadHistory.objects.all()
+    serializer_class = DownloadHistorySerializer
+    permission_classes = [IsAdminOrReadOnly]
