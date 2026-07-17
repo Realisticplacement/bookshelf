@@ -24,7 +24,7 @@ class UserManager (BaseUserManager):
 
 class User(AbstractUser):
 
-    email = models.CharField(unique=True)
+    email = models.CharField(unique=True, max_length= 255)
     username = models.CharField(max_length= 150, unique=True)
     ROLE_CHOICE = (('reader', 'Reader'), ('libarian','Libarian'))
     role = models.CharField(max_length=20, choices=ROLE_CHOICE, default='reader')
