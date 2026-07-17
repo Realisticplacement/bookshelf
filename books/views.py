@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework import viewsets, permissions
 from .models import Author, Series, Tag, Category, Book
 from .serializers import AuthorSerializer, SeriesSerializer, TagSerializer, CategorySerializer, BookSerializer
-from .permissions import IsAdminOrReadOnly
+from .permissions import IsAdminOrReadOnly, IsBookManagerOrReadOnly
 
 # Create your views here.
 
@@ -39,9 +39,10 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class BookViewSet(viewsets.ModelViewSet):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [IsAdminOrReadOnly]
+    permission_classes = [IsBookManagerOrReadOnly]
 
-
+    def perform_create(self, serializer):
+        serializer.save(uploaded_by=self.request.user)
 
     def get_queryset(self):
       

@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 # Create your models here.
@@ -50,6 +51,13 @@ class Book(models.Model):
     isbn = models.CharField(max_length=13, unique=True)
     cover_image = models.ImageField(upload_to='book_covers', blank=True, null=True)
     slug = models.SlugField(unique=True, blank=True, null=True)
+    uploaded_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        related_name='uploaded_books',
+        blank=True,
+        null=True,
+    )
 
     def __str__(self):
         return self.title

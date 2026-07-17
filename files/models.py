@@ -28,4 +28,5 @@ class DownloadHistory(models.Model):
 
     def __str__(self):
         return f'Downloaded {self.book_file} at {self.downloaded_at}'
+
     
