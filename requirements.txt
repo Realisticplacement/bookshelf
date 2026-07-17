@@ -8,7 +8,7 @@ djangorestframework_simplejwt==5.5.1
 dotenv==0.9.9
 drf-spectacular==0.29.0
 gunicorn==23.0.0
-whitenoise==6.0.8
+whitenoise==6.0.6
 dj-database-url==2.2.0
 psycopg2-binary==2.9.4
 inflection==0.5.1
