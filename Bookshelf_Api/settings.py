@@ -13,7 +13,11 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 from datetime import timedelta
 from pathlib import Path
 import os
-import dj_database_url
+
+try:
+    import dj_database_url
+except ImportError:  # pragma: no cover - fallback for minimal deployments
+    dj_database_url = None
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,12 +27,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-xp!ke+l8o$102j^ugft)6+7x=tc+p(@1vwu^uo!+g9y6+7*y_l'
+SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-xp!ke+l8o$102j^ugft)6+7x=tc+p(@1vwu^uo!+g9y6+7*y_l")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 
-ALLOWED_HOSTS = []
+allowed_hosts = os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1,.vercel.app")
+ALLOWED_HOSTS = [host.strip() for host in allowed_hosts.split(",") if host.strip()]
 
 
 # Application definition
@@ -158,17 +163,22 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", ".vercel.app"]
+if dj_database_url is not None:
+    DATABASES = {
+        "default": dj_database_url.config(
+            default=os.environ.get("DATABASE_URL", f"sqlite:///{BASE_DIR / 'db.sqlite3'}")
+        )
+    }
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
-SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret")
-
-DEBUG = os.environ.get("DEBUG", "False") == "True"
-
-DATABASES = {
-    "default": dj_database_url.config(default=os.environ.get("DATABASE_URL"))
-}
-
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR/ "media"
